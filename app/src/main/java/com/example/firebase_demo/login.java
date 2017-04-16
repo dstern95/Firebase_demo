@@ -16,7 +16,7 @@ public class login extends AppCompatActivity {
     {
 
         EditText ut = (EditText)findViewById(R.id.usernamedata);
-        String user = et.getText().toString();
+        String user = ut.getText().toString();
 
 
         EditText pt = (EditText)findViewById(R.id.passdata);
