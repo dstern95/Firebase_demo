@@ -32,6 +32,8 @@ public class login extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.activity_login);
 
         findViewById(R.id.create_button).setOnClickListener(this);
+        findViewById(R.id.logbutton).setOnClickListener(this);
+
         mEmailField = (EditText) findViewById(R.id.usernamedata);
         mPasswordField = (EditText) findViewById(R.id.passdata);
 
@@ -147,11 +149,12 @@ public class login extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+
         int i = v.getId();
         if (i == R.id.create_button) {
-            createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
-        } else if (i == R.id.logbutton) {
-            signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+            createAccount(mEmailField.getText().toString().toLowerCase(), mPasswordField.getText().toString());
+        } else {
+            signIn(mEmailField.getText().toString().toLowerCase(), mPasswordField.getText().toString());
         }
     }
 
