@@ -21,6 +21,14 @@
         android:layout_height="wrap_content"
         android:text="GET DATA"
         android:onClick="get"
+        android:id="@+id/gbutton"
+        />
+    <Button
+        android:layout_toRightOf="@+id/gbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:onClick="login"
         />
 
 </RelativeLayout>

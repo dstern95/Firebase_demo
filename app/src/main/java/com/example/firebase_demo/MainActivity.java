@@ -15,12 +15,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void send(View v)
     {
-        Intent intent1 = new Intent(this, login.class);
+        Intent intent1 = new Intent(this, sendData.class);
         startActivity(intent1);
     }
     public void get(View v)
     {
         Intent intent1 = new Intent(this, getData.class);
+        startActivity(intent1);
+    }
+    public void login(View v)
+    {
+        Intent intent1 = new Intent(this, login.class);
         startActivity(intent1);
     }
 
