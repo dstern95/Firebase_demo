@@ -1,27 +1,158 @@
 package com.example.firebase_demo;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
-public class login extends AppCompatActivity {
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+public class login extends AppCompatActivity implements View.OnClickListener {
+
+    private final String TAG = "Login";
+
+    private EditText mEmailField;
+    private EditText mPasswordField;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        findViewById(R.id.create_button).setOnClickListener(this);
+        mEmailField = (EditText) findViewById(R.id.usernamedata);
+        mPasswordField = (EditText) findViewById(R.id.passdata);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+                // ...
+            }
+        };
+
     }
-    public void login(View v)
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    private void createAccount(String email, String password) {
+        Log.d(TAG, "createAccount:" + email);
+        if (!validateForm()) {
+            return;
+        }
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(login.this, "Login Failed!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
+    public void signIn(String email, String password)
     {
+        Log.d(TAG, "Sign In:" + email);
+        if (!validateForm()) {
+            return;
+        }
 
-        EditText ut = (EditText)findViewById(R.id.usernamedata);
-        String user = ut.getText().toString();
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithEmail:failed", task.getException());
+                            Toast.makeText(login.this, "Log in Failed!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
+                    }
+                });
+
+    }
 
 
-        EditText pt = (EditText)findViewById(R.id.passdata);
-        String pass = pt.getText().toString();
+    private boolean validateForm() {
+        boolean valid = true;
 
+        String email = mEmailField.getText().toString();
+        if (TextUtils.isEmpty(email)) {
+            mEmailField.setError("Required.");
+            valid = false;
+        } else {
+            mEmailField.setError(null);
+        }
+
+        String password = mPasswordField.getText().toString();
+        if (TextUtils.isEmpty(password)) {
+            mPasswordField.setError("Required.");
+            valid = false;
+        } else {
+            mPasswordField.setError(null);
+        }
+
+        return valid;
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        if (i == R.id.create_button) {
+            createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
+        } else if (i == R.id.logbutton) {
+            signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+        }
     }
 
 }
