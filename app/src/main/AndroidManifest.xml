@@ -23,7 +23,7 @@
         </activity>
         <activity android:name=".getData" />
         <activity android:name=".sendData" />
-        <activity android:name=".login"></activity>
+        <activity android:name=".login" />
     </application>
 
 </manifest>
