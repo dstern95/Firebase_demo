@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:text="send"
         android:onClick="send"
-        android:layout_below="@+id/send"
+        android:layout_below="@+id/sentdata"
         />
 </RelativeLayout>
 
