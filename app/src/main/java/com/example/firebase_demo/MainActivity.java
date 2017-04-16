@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void send(View v)
     {
-        Intent intent1 = new Intent(this, LoginTest.class);
+        Intent intent1 = new Intent(this, login.class);
         startActivity(intent1);
     }
     public void get(View v)
