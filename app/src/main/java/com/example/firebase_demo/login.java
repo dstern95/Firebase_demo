@@ -1,5 +1,7 @@
 package com.example.firebase_demo;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +20,9 @@ import com.google.firebase.auth.FirebaseUser;
 public class login extends AppCompatActivity implements View.OnClickListener {
 
     private final String TAG = "Login";
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    SharedPreferences sharedpreferences;
+    String username;
 
     private EditText mEmailField;
     private EditText mPasswordField;
@@ -70,7 +75,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    private void createAccount(String email, String password) {
+    private void createAccount(final String email, String password) {
         Log.d(TAG, "createAccount:" + email);
         if (!validateForm()) {
             return;
@@ -82,12 +87,14 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
+
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Toast.makeText(login.this, "Login Failed!",
                                     Toast.LENGTH_SHORT).show();
+
                         }
 
                         // ...
@@ -108,6 +115,15 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
+                        if (task.isSuccessful())
+                        {
+                            sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedpreferences.edit();
+                            editor.putString("user", username);
+                            editor.commit();
+
+                        }
+
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -115,6 +131,10 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
                             Toast.makeText(login.this, "Log in Failed!",
                                     Toast.LENGTH_SHORT).show();
+                            sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedpreferences.edit();
+                            editor.putString("user", null);
+                            editor.commit();
                         }
 
                         // ...
@@ -154,6 +174,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
         if (i == R.id.create_button) {
             createAccount(mEmailField.getText().toString().toLowerCase(), mPasswordField.getText().toString());
         } else {
+            username = mEmailField.getText().toString().toLowerCase();
             signIn(mEmailField.getText().toString().toLowerCase(), mPasswordField.getText().toString());
         }
     }
